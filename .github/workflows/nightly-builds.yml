@@ -24,10 +24,10 @@ jobs:
             cmake_preset: windows-x64-debug
             devenv_arch: amd64
             bundle_name: metamod-fwgs_windows_x64
-          - os: ubuntu-latest
+          - os: ubuntu-22.04
             cmake_preset: linux-x86-debug
             bundle_name: metamod-fwgs_linux_x86
-          - os: ubuntu-latest
+          - os: ubuntu-22.04
             cmake_preset: linux-x64-debug
             bundle_name: metamod-fwgs_linux_x64
     steps:
