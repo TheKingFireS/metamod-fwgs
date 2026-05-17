@@ -24,10 +24,10 @@ jobs:
             cmake_preset: windows-x64-debug
             devenv_arch: amd64
             bundle_name: metamod-fwgs_windows_x64
-          - os: ubuntu-22.04
+          - os: ubuntu-latest
             cmake_preset: linux-x86-debug
             bundle_name: metamod-fwgs_linux_x86
-          - os: ubuntu-22.04
+          - os: ubuntu-latest
             cmake_preset: linux-x64-debug
             bundle_name: metamod-fwgs_linux_x64
     steps:
@@ -37,14 +37,23 @@ jobs:
           submodules: recursive
           fetch-depth: 0
 
-      - name: Install dependencies (Linux)
+      - name: Setup Podman and distrobox (Linux)
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install gcc-multilib g++-multilib cmake
-
-      - name: Install ninja-build tool
-        uses: seanmiddleditch/gha-setup-ninja@v4
+          sudo apt-get -y install podman uidmap curl
+          curl -sL https://raw.githubusercontent.com/89luca89/distrobox/main/install | sudo sh
+          export DBX_NON_INTERACTIVE=1
+          distrobox create --name ci-box --image ubuntu:20.04 --yes || true
+          distrobox enter ci-box -- bash -lc "
+            set -euo pipefail
+            ls -lh
+            popd
+          "
+      - name: Cleanup distrobox (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          distrobox rm -f ci-box || true
 
       - name: Create build environment
         run: |
